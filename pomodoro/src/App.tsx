@@ -1,11 +1,16 @@
 import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {SafeAreaView, StyleSheet} from 'react-native';
+
+import Providers from './Providers';
+import Container from './components/Container';
 
 const App = () => {
   return (
-    <View style={styles.container}>
-      <Text>Hello World!</Text>
-    </View>
+    <Providers>
+      <SafeAreaView style={styles.container}>
+        <Container></Container>
+      </SafeAreaView>
+    </Providers>
   );
 };
 
