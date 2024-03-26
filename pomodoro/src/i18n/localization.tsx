@@ -61,7 +61,7 @@ const TranslationProvider = ({children}: {children: React.ReactNode}) => {
 const useTranslation = () => {
   const translation = useContext(TranslationContext);
   return useCallback(
-    (key: string) => getValueFromObject(key, translation),
+    (key: TranslationKey) => getValueFromObject(key, translation),
     [translation],
   );
 };
