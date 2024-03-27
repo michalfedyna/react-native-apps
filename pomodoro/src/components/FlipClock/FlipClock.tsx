@@ -10,37 +10,74 @@ interface FlipClockProps {
   value: number;
 }
 
-function numberToTime(number: number): Time {
+function numberToTime(number: number) {
   const hours = Math.floor(number / 3600);
   const minutes = Math.floor((number - hours * 3600) / 60);
   const seconds = number - hours * 3600 - minutes * 60;
+
   return {hours, minutes, seconds};
 }
 
-export type Time = {
-  seconds: number;
-  minutes: number;
-  hours: number;
-};
+function numberToTimeState(number: number): TimeState {
+  const value = numberToTime(number);
+  const prevValue = numberToTime(number - 1);
+  const nextValue = numberToTime(number + 1);
+
+  return [
+    {
+      seconds: {
+        prevValue: prevValue.seconds,
+        value: value.seconds,
+        nextValue: nextValue.seconds,
+      },
+      minutes: {
+        prevValue: prevValue.minutes,
+        value: value.minutes,
+        nextValue: nextValue.minutes,
+      },
+      hours: {
+        prevValue: prevValue.hours,
+        value: value.hours,
+        nextValue: nextValue.hours,
+      },
+    },
+  ];
+}
 
 type TimeState = {
-  prevValue: Time;
-  value: Time;
-  nextValue: Time;
+  seconds: TimeValue;
+  minutes: TimeValue;
+  hours: TimeValue;
+}[];
+
+type TimeValue = {
+  prevValue: number;
+  value: number;
+  nextValue: number;
+  duration?: number;
 };
 
-type TimeActions = {type: 'set'; value: number};
+type TimeActions = {type: 'push'; value: number} | {type: 'pop'};
 
-const timeInitialState = {
-  prevValue: {seconds: 0, minutes: 0, hours: 0},
-  value: {seconds: 0, minutes: 0, hours: 0},
-  nextValue: {seconds: 0, minutes: 0, hours: 0},
-};
+const timeInitialState: TimeState = [
+  {
+    seconds: {prevValue: 0, value: 0, nextValue: 0},
+    minutes: {prevValue: 0, value: 0, nextValue: 0},
+    hours: {prevValue: 0, value: 0, nextValue: 0},
+  },
+];
 
 function timeReducer(state: TimeState, action: TimeActions) {
   switch (action.type) {
-    case 'set': {
-      return state;
+    case 'push': {
+      return [...numberToTimeState(action.value), ...state];
+    }
+    case 'pop': {
+      if (state.length > 1) {
+        return state.slice(-1);
+      } else {
+        return state;
+      }
     }
     default: {
       return state;
@@ -52,41 +89,37 @@ const FlipClock: Component<FlipClockProps> = ({value}) => {
   const [time, timeDispatch] = useReducer<typeof timeReducer, TimeState>(
     timeReducer,
     timeInitialState,
-    () => ({
-      prevValue: numberToTime(value - 1),
-      value: numberToTime(value),
-      nextValue: numberToTime(value + 1),
-    }),
+    () => numberToTimeState(value),
   );
 
-  useEffect(() => {}, [value]);
+  useEffect(() => {
+    timeDispatch({type: 'push', value});
+  }, [value]);
 
-  const seconds = {
-    prevValue: time.prevValue.seconds,
-    value: time.value.seconds,
-    nextValue: time.nextValue.seconds,
+  const popTimeValue = () => {
+    timeDispatch({type: 'pop'});
   };
-
-  const minutes = {
-    prevValue: time.prevValue.minutes,
-    value: time.value.minutes,
-    nextValue: time.nextValue.minutes,
-  };
-
-  const hours = {
-    prevValue: time.prevValue.hours,
-    value: time.value.hours,
-    nextValue: time.nextValue.hours,
-  };
-
-  console.log(time);
 
   return (
-    <Container style={containerStyle}>
-      <Card value={hours} mode="incement" />
-      <Card value={minutes} mode="incement" />
-      <Card value={seconds} mode="incement" />
-    </Container>
+    <>
+      <Container style={containerStyle}>
+        <Card
+          onAnimateEnd={popTimeValue}
+          value={time[0].hours}
+          mode="incement"
+        />
+        <Card
+          onAnimateEnd={popTimeValue}
+          value={time[0].minutes}
+          mode="incement"
+        />
+        <Card
+          onAnimateEnd={popTimeValue}
+          value={time[0].seconds}
+          mode="incement"
+        />
+      </Container>
+    </>
   );
 };
 
@@ -100,4 +133,4 @@ const containerStyle: Style = {
 };
 
 export default FlipClock;
-export type {FlipClockProps};
+export type {FlipClockProps, TimeValue};

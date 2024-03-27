@@ -5,21 +5,20 @@ import Container from '../Container';
 
 import type {Component} from '../../Types';
 import {Style} from '../../styles/styles';
+import {formatToString} from './utils';
 
 interface BackgroundCardProps {
-  value: number;
+  value: {prevValue: number; value: number; nextValue: number};
 }
-
-// TODO: Top and bottom halfs
 
 const BackgroundCard: Component<BackgroundCardProps> = ({value}) => {
   return (
     <>
       <Container>
-        <Text style={textStyle}>{value}</Text>
+        <Text style={textStyle}>{formatToString(value.value)}</Text>
       </Container>
       <Container style={containerTopStyle}>
-        <Text style={textStyleTop}>{value + 1}</Text>
+        <Text style={textStyleTop}>{formatToString(value.nextValue)}</Text>
       </Container>
     </>
   );

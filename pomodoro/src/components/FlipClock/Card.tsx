@@ -6,19 +6,19 @@ import BackgroundCard from './BackgroudCard';
 
 import type {Component} from '../../Types';
 import type {Style} from '../../styles/styles';
+import {TimeValue} from './FlipClock';
 
 interface CardProps {
-  value: {prevValue: number; value: number; nextValue: number};
+  value: TimeValue;
   mode: 'incement' | 'decrement' | 'input';
+  onAnimateEnd: () => void;
 }
 
-// TODO: Make AninmatedCards into a single component
-
-const Card: Component<CardProps> = ({value}) => {
+const Card: Component<CardProps> = ({value, onAnimateEnd}) => {
   return (
     <Container style={containerStyle}>
       <BackgroundCard value={value} />
-      {/* <AnimatedCard value={value} /> */}
+      <AnimatedCard value={value} onAnimateEnd={onAnimateEnd} />
     </Container>
   );
 };

@@ -5,66 +5,50 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withDelay,
-  withRepeat,
+  withSequence,
   withTiming,
 } from 'react-native-reanimated';
 
+import useAnimatedCardState from './useAnimatedCardState';
+
 import Container from '../Container';
+
+import {formatToString} from './utils';
+import {TimeValue} from './FlipClock';
 
 import type {Component} from '../../Types';
 import type {Style} from '../../styles/styles';
 
 interface AnimatedCardProps {
-  value: number;
+  value: TimeValue;
+  onAnimateEnd: () => void;
 }
 
 const AnimatedCard: Component<AnimatedCardProps> = ({value}) => {
-  const rotateXTop = useSharedValue('0deg');
-  const rotateXBottom = useSharedValue('90deg');
+  const {rotateBottom, rotateTop} = useAnimatedCardState({value});
 
   const animatedStyleTop = useAnimatedStyle(() => {
     return {
-      transform: [{rotateX: rotateXTop.value}],
+      transform: [{rotateX: rotateTop.value}],
     };
   });
 
   const animatedStyleBottom = useAnimatedStyle(() => {
     return {
-      transform: [{rotateX: rotateXBottom.value}],
+      transform: [{rotateX: rotateBottom.value}],
     };
-  });
-
-  useEffect(() => {
-    const rotationTop = '90deg';
-    const rotationBottom = '0';
-
-    rotateXTop.value = withRepeat(
-      withDelay(
-        500,
-        withTiming(rotationTop, {duration: 500}, () => {
-          rotateXBottom.value = withTiming(
-            rotationBottom,
-            {duration: 500},
-            () => {
-              rotateXBottom.value = '90deg';
-            },
-          );
-        }),
-      ),
-      0,
-    );
   });
 
   return (
     <>
       <Container style={containerStyleTop}>
         <Animated.Text style={[textStyleTop, animatedStyleTop]}>
-          {value}
+          {formatToString(value.value)}
         </Animated.Text>
       </Container>
       <Container style={containerStyleBottom}>
         <Animated.Text style={[textStyleBottom, animatedStyleBottom]}>
-          {value + 1}
+          {formatToString(value.nextValue)}
         </Animated.Text>
       </Container>
     </>
