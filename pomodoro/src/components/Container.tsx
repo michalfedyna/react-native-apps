@@ -12,7 +12,7 @@ interface ContainerProps {
 
 const Container: ComponentWithChildren<ContainerProps> = ({
   children,
-  style,
+  style = {},
 }) => {
   const containerStyle = useStyle(style);
 

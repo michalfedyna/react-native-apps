@@ -4,19 +4,21 @@ import {ImageStyle, StyleSheet, TextStyle, ViewStyle} from 'react-native';
 import {useTheme} from './theme';
 import type {Theme} from './theme';
 
-type Styles<T extends StyleSheet.NamedStyles<T>> =
-  | StyleSheet.NamedStyles<T>
-  | ((theme: Theme) => StyleSheet.NamedStyles<T>);
+type NamedStyles<T> = {[P in keyof T]: ViewStyle | TextStyle | ImageStyle};
+
+type Styles<T extends NamedStyles<T>> =
+  | NamedStyles<T>
+  | ((theme: Theme) => NamedStyles<T>);
 
 type Style =
   | (ViewStyle | TextStyle | ImageStyle)
   | ((theme: Theme) => ViewStyle | TextStyle | ImageStyle);
 
-function useStyles<T extends StyleSheet.NamedStyles<T>>(
-  styles?: Styles<T>,
-): StyleSheet.NamedStyles<T> | undefined {
-  if (!styles) return;
-
+function useStyles<T extends NamedStyles<T>>(
+  styles: Styles<T>,
+): {
+  [P in keyof T]: ViewStyle | TextStyle | ImageStyle;
+} {
   const theme = useTheme();
 
   return useMemo(
@@ -26,11 +28,7 @@ function useStyles<T extends StyleSheet.NamedStyles<T>>(
   );
 }
 
-function useStyle(
-  style?: Style,
-): ViewStyle | TextStyle | ImageStyle | undefined {
-  if (!style) return;
-
+function useStyle(style: Style): ViewStyle | TextStyle | ImageStyle {
   const theme = useTheme();
 
   return useMemo(

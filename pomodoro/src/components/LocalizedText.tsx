@@ -1,23 +1,24 @@
 import React from 'react';
-import {Text} from 'react-native';
+
+import Text from './Text';
+import type {TextProps} from './Text';
 
 import {useTranslation} from '../i18n/localization';
-import {useStyle} from '../styles/styles';
 
 import type {TranslationKey} from '../i18n/localization';
 import type {Component} from '../Types';
-import type {Style} from '../styles/styles';
 
-interface LocalizedTextProps {
+interface LocalizedTextProps extends TextProps {
   translation: TranslationKey;
-  style?: Style;
 }
 
-const LocalizedText: Component<LocalizedTextProps> = ({translation, style}) => {
-  const textStyle = useStyle(style);
+const LocalizedText: Component<LocalizedTextProps> = ({
+  translation,
+  style = {},
+}) => {
   const getTranslation = useTranslation();
 
-  return <Text style={textStyle}>{getTranslation(translation)}</Text>;
+  return <Text style={style}>{getTranslation(translation)}</Text>;
 };
 
 export default LocalizedText;

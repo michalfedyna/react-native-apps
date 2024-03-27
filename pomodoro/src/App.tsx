@@ -1,26 +1,27 @@
 import React from 'react';
-import {SafeAreaView, StyleSheet} from 'react-native';
+import {SafeAreaView} from 'react-native';
 
 import Providers from './Providers';
+import FlipClock from './components/FlipClock/FlipClock';
+
+import {useStyles} from './styles/styles';
 import Container from './components/Container';
-import LocalizedText from './components/LocalizedText';
 
 const App = () => {
+  const styles = useStyles({
+    saveArea: {flex: 1},
+    container: {flex: 1, justifyContent: 'center'},
+  });
+
   return (
     <Providers>
-      <SafeAreaView style={styles.container}>
-        <Container style={{backgroundColor: 'red'}}>
-          <LocalizedText translation="actions.confirm" />
+      <SafeAreaView style={styles.saveArea}>
+        <Container style={styles.container}>
+          <FlipClock value={70} />
         </Container>
       </SafeAreaView>
     </Providers>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});
 
 export default App;
