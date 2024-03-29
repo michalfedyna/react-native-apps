@@ -6,4 +6,6 @@ type ComponentWithChildren<T = unknown> = FunctionComponent<
   PropsWithChildren<T>
 >;
 
-export type {Component, ComponentWithChildren};
+type Hook<T = unknown, U = unknown> = (props: T) => U;
+
+export type {Component, ComponentWithChildren, Hook};

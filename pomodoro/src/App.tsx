@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Button, SafeAreaView} from 'react-native';
+import {SafeAreaView} from 'react-native';
 
 import Providers from './Providers';
 import FlipClock from './components/FlipClock/FlipClock';
@@ -20,7 +20,6 @@ const App = () => {
       <SafeAreaView style={styles.saveArea}>
         <Container style={styles.container}>
           <FlipClock value={value} />
-          <Button title="Increment" onPress={() => setValue(value + 1)} />
         </Container>
       </SafeAreaView>
     </Providers>
